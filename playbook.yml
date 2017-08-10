@@ -10,7 +10,7 @@
   tasks:
     - name: updating /etc/hosts in case of dns lookup issues
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_eth1.ipv4.address }} {{ item }}" state=present
-      with_items: groups['all']
+      with_items: "{{groups['all']}}"
       when: config_hosts is defined and config_hosts
       tags:
         - update_etc_hosts
@@ -40,7 +40,7 @@
 
     - name: adding ssh authorized_keys
       authorized_key: user=vagrant key="{{ lookup('file', 'ssh_pub_keys/vagrant' + '@' + item + '.pub') }}" state=present
-      with_items: groups['all']
+      with_items: "{{groups['all']}}"
       tags:
         - ssh_keys
 
