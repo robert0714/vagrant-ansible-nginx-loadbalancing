@@ -10,7 +10,7 @@
   tasks:
     - name: updating /etc/hosts in case of dns lookup issues
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_eth1.ipv4.address }} {{ item }}" state=present
-      with_items: "{{groups['all']}}"
+      with_items: "{{ groups['all'] }}"
       when: config_hosts is defined and config_hosts
       tags:
         - update_etc_hosts
@@ -40,7 +40,7 @@
 
     - name: adding ssh authorized_keys
       authorized_key: user=vagrant key="{{ lookup('file', 'ssh_pub_keys/vagrant' + '@' + item + '.pub') }}" state=present
-      with_items: "{{groups['all']}}"
+      with_items: "{{ groups['all'] }}"
       tags:
         - ssh_keys
 
@@ -187,7 +187,7 @@
     - name: configuring nginx load balancer (TCP) configs
       template: src=templates/etc/nginx/stream.d/streams.conf.j2 dest=/etc/nginx/stream.d/{{ item.name }}.conf
       notify: restart nginx
-      with_items: load_balancer_configs
+      with_items: "{{ load_balancer_configs }}"
       when: load_balancer_configs is defined and item.protocol == "tcp"
       tags:
         - config_load_balancers
@@ -195,7 +195,7 @@
     - name: configuring nginx load balancer (HTTP) configs
       template: src=templates/etc/nginx/conf.d/http.conf.j2 dest=/etc/nginx/conf.d/{{ item.name }}.conf
       notify: restart nginx
-      with_items: load_balancer_configs
+      with_items:  "{{ load_balancer_configs }}"
       when: load_balancer_configs is defined and item.protocol == "http"
       tags:
         - config_load_balancers
